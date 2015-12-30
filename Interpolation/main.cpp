@@ -36,6 +36,11 @@ float t = 0;
 CAMERA camera;
 FRUSTUM centerFrustum;
 
+//CURVES
+CURVE curve;
+VECTOR3D pointToMove;
+VECTOR3D initPoint = { 5, 4, 6 };
+unsigned short int numPoints = 4;
 
 double rotateangle = 0;
 
@@ -50,6 +55,20 @@ int main(int argc,char **argv)
     glutCreateWindow("Stereo Rendering");
     if (fullscreen)
         glutFullScreen();
+
+	VECTOR3D point = initPoint;
+	std::vector<VECTOR3D> v;
+	std::vector<VECTOR3D>::iterator itV;
+
+	for (unsigned short int i = 0; i < numPoints; i++) {
+		itV = v.begin();
+		point = { point.x += 8 , point.y--, point.z += 6 };
+		v.insert(itV, point);
+	}
+
+	//itV = curve.P.begin();
+	curve.P = v;
+
     glutDisplayFunc( Display);
     glutReshapeFunc(HandleReshape);
     glutReshapeWindow(camera.screenwidth,camera.screenheight);
@@ -137,8 +156,15 @@ void Render(void)
 
     drawAxis();
     
+	//CURVES
+	glutSetColor(0, 255, 255, 255);
+
+	drawCurve(curve);
+
+	drawDot(pointToMove);
+
     // add
-    {
+    /*{
         VECTOR3D a = {3,2,0};
         VECTOR3D b = {2,1,0};
         
@@ -147,7 +173,7 @@ void Render(void)
         
         VECTOR3D p = Add(a,b);
         drawDot(p, 0.25);
-    }
+    }*/
     
     // substract
 //    {
@@ -245,11 +271,13 @@ void HandleKeyboard(unsigned char key,int x, int y)
         case '+':
             t += tSpeed;
             t = t > 1 ? 1:t;
+			pointToMove = interpolate(curve, t);		//CURVES
             break;
 
         case '-':
             t -= tSpeed;
             t = t <0 ? 0:t;
+			pointToMove = interpolate(curve, t);		//CURVES
             break;
 
         case 'h':

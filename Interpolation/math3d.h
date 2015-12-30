@@ -202,6 +202,7 @@ VECTOR3D interpolate(CURVE curve, float t) {
 void drawCurve(CURVE curve) {
 	VECTOR3D v;
 
+	glutSetColor(0, 255, 255, 255);
 	glBegin(GL_LINE_STRIP);
 	for (float i = 0; i <= 1; i += 0.01) {
 		v = interpolate(curve, i);
